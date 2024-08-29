@@ -9,8 +9,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import routes from './router'
 import { renderWithQiankun, qiankunWindow } from 'vite-plugin-qiankun/dist/helper'
 
-const app = createApp(App) 
-app.use(createPinia()) 
+let app = null
 // app.mount('#app')
 // renderWithQiankun： 为子应用导出一些生命周期函数 供主应用在特殊的时机调用
 // qiankunWindow： qiankunWindow.POWERED_BY_QIANKUN 可判断是否在qiankun环境下
@@ -29,6 +28,11 @@ const initQianKun = () => {
         // 应用每次 切出/卸载 会调用的unmount方法，通常在这里我们会卸载微应用的应用实例
         unmount(_props) {
             console.log('vue3 unmount', _props);
+            if (app) {
+                app.unmount()
+                app._container.innerHTML = ''
+                app = null
+            }
         },
         update: function (props) {
             console.log('vue3 update');
@@ -43,6 +47,8 @@ const render = (props) => {
         history: createWebHistory(qiankunWindow.__POWERED_BY_QIANKUN__ ? routerBase : '/'),
         routes
     })
+    app = createApp(App) 
+    app.use(createPinia()) 
     app.use(router)
     // 如果是在主应用的环境下就挂载主应用的节点，否则挂载到本地
     // const appDom = container ? container : "#app"

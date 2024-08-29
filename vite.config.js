@@ -1,3 +1,5 @@
+const packName = require('./package').name
+
 import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
@@ -10,7 +12,7 @@ import qiankun from 'vite-plugin-qiankun'
 export default defineConfig({
   plugins: [
     vue(),vueJsx(),
-    qiankun('vue3', {
+    qiankun(`${packName}`, {
       useDevMode: true
     })
   ],
